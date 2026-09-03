@@ -1,0 +1,105 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "field_corn_01",
+      "properties": {
+        "name": "Oakridge Corn Sector Alpha",
+        "crop": "corn",
+        "variety": "Pioneer P1197AM",
+        "planting_date": "2026-04-18",
+        "area_ha": 34.2,
+        "soil_type": "clay_loam",
+        "irrigation": "Center Pivot"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-93.650, 42.025],
+            [-93.642, 42.025],
+            [-93.642, 42.018],
+            [-93.650, 42.018],
+            [-93.650, 42.025]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "field_soybean_02",
+      "properties": {
+        "name": "Prairie View Soybean Block 4",
+        "crop": "soybean",
+        "variety": "Asgrow AG27XF1",
+        "planting_date": "2026-05-02",
+        "area_ha": 28.5,
+        "soil_type": "silt_loam",
+        "irrigation": "Rainfed"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-88.245, 40.115],
+            [-88.238, 40.115],
+            [-88.238, 40.108],
+            [-88.245, 40.108],
+            [-88.245, 40.115]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "field_wheat_03",
+      "properties": {
+        "name": "Highland Winter Wheat Plot",
+        "crop": "wheat",
+        "variety": "WB4303",
+        "planting_date": "2025-10-12",
+        "area_ha": 45.0,
+        "soil_type": "sandy_loam",
+        "irrigation": "Rainfed"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-98.500, 38.500],
+            [-98.490, 38.500],
+            [-98.490, 38.490],
+            [-98.500, 38.490],
+            [-98.500, 38.500]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "field_tomato_04",
+      "properties": {
+        "name": "Valley Commercial Tomato Greenhouse & Field",
+        "crop": "tomato",
+        "variety": "San Marzano Heirloom",
+        "planting_date": "2026-03-25",
+        "area_ha": 12.8,
+        "soil_type": "silt_loam",
+        "irrigation": "Sub-surface Drip"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-121.485, 38.575],
+            [-121.478, 38.575],
+            [-121.478, 38.568],
+            [-121.485, 38.568],
+            [-121.485, 38.575]
+          ]
+        ]
+      }
+    }
+  ]
+}

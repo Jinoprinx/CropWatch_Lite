@@ -1,0 +1,260 @@
+{
+  "diseases": {
+    "corn_northern_leaf_blight": {
+      "name": "Northern Corn Leaf Blight",
+      "crop": "Corn (Maize)",
+      "pathogen": "Exserohilum turcicum (Fungus)",
+      "severity_levels": {
+        "low": "Sparse cigar-shaped lesions (<5% leaf area). Yield impact minimal (<3%).",
+        "moderate": "Elongated grayish-green to tan lesions (5-20% leaf area). Photosynthetic inhibition (~10-15% yield loss).",
+        "severe": "Widespread coalescing necrotic blights (>20% leaf area). Premature plant death (~30-50% yield loss)."
+      },
+      "symptoms": "Long, elliptical, cigar-shaped tan lesions (2.5 to 15 cm long) initially developing on lower leaves and progressing upward into the canopy.",
+      "treatments": {
+        "organic": [
+          "Foliar application of Bacillus subtilis (biological fungicide) at early onset.",
+          "Copper octanoate / Bordeaux mixture spray during cool humid periods.",
+          "Neem oil foliar misting (1-2% solution) as a preventive surface protectant."
+        ],
+        "chemical": [
+          "Azoxystrobin + Difenoconazole (e.g., Amistar Top) at 0.5-1.0 L/ha.",
+          "Pyraclostrobin (e.g., Headline AMP) applied at tasseling (VT) to silking (R1).",
+          "Propiconazole (e.g., Tilt 250 EC) at 0.5 L/ha during early lesion emergence."
+        ],
+        "cultural_practices": [
+          "Implement 2-year crop rotation with non-host crops like soybeans or alfalfa.",
+          "Deep tillage of crop residue to accelerate fungal decomposition.",
+          "Select resistant hybrids with Ht1, Ht2, Ht3, or HtN resistance genes."
+        ]
+      }
+    },
+    "corn_common_rust": {
+      "name": "Common Rust of Corn",
+      "crop": "Corn (Maize)",
+      "pathogen": "Puccinia sorghi (Fungus)",
+      "severity_levels": {
+        "low": "Scattered circular to elongate cinnamon-brown pustules on lower leaves (<5%).",
+        "moderate": "Dense pustule clusters across mid canopy (5-25%). Stunted ear filling.",
+        "severe": "Leaf chlorosis, drying, and extensive rupture (>25%). Substantial grain weight reduction."
+      },
+      "symptoms": "Small, powdery, cinnamon-brown to dark reddish pustules appearing on both upper and lower leaf surfaces.",
+      "treatments": {
+        "organic": [
+          "Sulfur-based bio-fungicide dust or wettable sulfur spray (3-5 kg/ha).",
+          "Bio-inoculation with Trichoderma harzianum to colonize leaf surfaces."
+        ],
+        "chemical": [
+          "Tebuconazole + Trifloxystrobin (e.g., Nativo 75 WG) at 0.35 kg/ha.",
+          "Mancozeb 75 WP as protective surface barrier (2.0 kg/ha)."
+        ],
+        "cultural_practices": [
+          "Plant early in the season to evade late-summer airborne spore influx.",
+          "Maintain optimal nitrogen balance; avoid excessive nitrogen fertilization which creates lush susceptible tissue."
+        ]
+      }
+    },
+    "tomato_early_blight": {
+      "name": "Early Blight of Tomato",
+      "crop": "Tomato",
+      "pathogen": "Alternaria solani (Fungus)",
+      "severity_levels": {
+        "low": "Concentric ring spots on lowest mature leaves (<5% foliage).",
+        "moderate": "Target-like brown lesions expanding with yellow halo (5-25% foliage).",
+        "severe": "Complete defoliation of lower/mid canopy, stem lesions, and fruit sunscald (>25%)."
+      },
+      "symptoms": "Dark brown to black lesions with characteristic concentric rings ('bullseye' or 'target' pattern) surrounded by a chlorotic yellow halo.",
+      "treatments": {
+        "organic": [
+          "Bio-fungicide: Bacillus amyloliquefaciens foliar spray (Serenade ASO) at 4-8 L/ha.",
+          "Liquid copper sulfate / Copper Hydroxide (Kocide 3000) every 7-10 days.",
+          "Potassium bicarbonate (3g/L) for pH modification on leaf surfaces."
+        ],
+        "chemical": [
+          "Chlorothalonil (e.g., Bravo Weather Stik) at 1.5-2.0 L/ha for broad preventive coverage.",
+          "Difenoconazole (e.g., Score 250 EC) at 0.5 L/ha for systemic translaminar eradication.",
+          "Mandipropamid + Difenoconazole (Revus Top) at 0.6 L/ha."
+        ],
+        "cultural_practices": [
+          "Stake and prune indeterminate vines to enhance air circulation and reduce canopy humidity.",
+          "Drip irrigation only; avoid overhead sprinklers that wet foliage.",
+          "Apply organic straw mulch around plant base to prevent rain-splash of soil-borne spores."
+        ]
+      }
+    },
+    "tomato_late_blight": {
+      "name": "Late Blight of Tomato / Potato",
+      "crop": "Tomato / Potato",
+      "pathogen": "Phytophthora infestans (Oomycete)",
+      "severity_levels": {
+        "low": "Water-soaked irregular pale green/gray spots on leaf tips (<5%).",
+        "moderate": "Rapidly expanding dark brown lesions with white mold on underside in humid air (5-20%).",
+        "severe": "Total vine collapse, blackened foliage, and foul-smelling rot within 72-96 hours (>20%)."
+      },
+      "symptoms": "Irregular water-soaked greasy lesions turning rapidly purplish-brown/black, with delicate white fuzzy sporulation visible on the underside during humid mornings.",
+      "treatments": {
+        "organic": [
+          "Preventive Copper Oxychloride / Bordeaux mixture applied prior to expected rain events.",
+          "Hydrogen dioxide + peroxyacetic acid foliar sanitization (OxiDate 2.0)."
+        ],
+        "chemical": [
+          "Metalaxyl-M + Mancozeb (e.g., Ridomil Gold MZ) at 2.5 kg/ha.",
+          "Cyazofamid (e.g., Ranman 400 SC) at 0.2 L/ha (anti-oomycete specialist).",
+          "Dimethomorph (e.g., Acrobat 50 WP) at 1.0 kg/ha."
+        ],
+        "cultural_practices": [
+          "Immediately rogue and bury or burn infected plants; do NOT compost.",
+          "Space rows generously for maximum wind drying.",
+          "Utilize blight forecasting tools (e.g., Blitecast / Simcast) to time protective sprays."
+        ]
+      }
+    },
+    "potato_late_blight": {
+      "name": "Late Blight of Potato",
+      "crop": "Potato",
+      "pathogen": "Phytophthora infestans (Oomycete)",
+      "severity_levels": {
+        "low": "Initial water-soaked spots on leaf margins and upper stems (<5%).",
+        "moderate": "Necrotic patches spreading down canopy with tuber rot risk (5-25%).",
+        "severe": "Canopy destruction, stem cankers, and systemic tuber rot (>25%)."
+      },
+      "symptoms": "Dark brown-black necrotic spots with pale chlorotic border, spreading rapidly under cool (12-20°C) and wet conditions.",
+      "treatments": {
+        "organic": [
+          "Preventive copper hydroxide sprays weekly.",
+          "Strict sanitation and certified pathogen-free seed tubers."
+        ],
+        "chemical": [
+          "Fluopicolide + Propamocarb hydrochloride (Infinito) at 1.4 L/ha.",
+          "Cymoxanil + Mancozeb (Curzate M8) at 2.0 kg/ha."
+        ],
+        "cultural_practices": [
+          "Ensure adequate soil hilling to create a physical barrier protecting subterranean tubers from sporangia wash-down.",
+          "Destroy cull piles before season emergence."
+        ]
+      }
+    },
+    "wheat_yellow_rust": {
+      "name": "Stripe / Yellow Rust of Wheat",
+      "crop": "Wheat",
+      "pathogen": "Puccinia striiformis (Fungus)",
+      "severity_levels": {
+        "low": "Linear stripes of yellow pustules on lower leaves (<5%).",
+        "moderate": "Parallel yellow-orange stripes covering flag leaf (5-30%). Critical grain filling threat.",
+        "severe": "Extensive flag leaf chlorosis, glume infection, shriveled kernels (>30%)."
+      },
+      "symptoms": "Bright yellow to orange-yellow pustules arranged in narrow, parallel linear stripes along leaf veins.",
+      "treatments": {
+        "organic": [
+          "Planting multi-line cultivar blends with diversified Yr resistance.",
+          "Foliar biocontrol with Ampelomyces quisqualis or Streptomyces griseus."
+        ],
+        "chemical": [
+          "Epoxiconazole + Pyraclostrobin (Opera) at 0.75-1.0 L/ha.",
+          "Azoxystrobin + Cyproconazole (Amistar Xtra) at 0.6 L/ha at flag leaf emergence (Zadoks GS 39)."
+        ],
+        "cultural_practices": [
+          "Eliminate volunteer wheat / green bridge during off-season.",
+          "Early monitoring during cool spring weather (10-15°C)."
+        ]
+      }
+    },
+    "grape_black_rot": {
+      "name": "Black Rot of Grape",
+      "crop": "Grape / Vineyard",
+      "pathogen": "Guignardia bidwellii (Fungus)",
+      "severity_levels": {
+        "low": "Reddish-brown circular spots on young leaves (<5%).",
+        "moderate": "Expanding lesions with black pycnidia dots; early berry shriveling (5-20%).",
+        "severe": "Complete mummification of grape clusters and severe vine canopy loss (>20%)."
+      },
+      "symptoms": "Circular reddish-brown leaf spots developing tiny black fruiting bodies (pycnidia) in a ring. Berries turn brown, rot, and shrivel into hard, black mummies.",
+      "treatments": {
+        "organic": [
+          "Lime sulfur applied during dormant to bud-break stage.",
+          "Copper octanoate sprays from pre-bloom through veraison."
+        ],
+        "chemical": [
+          "Myclobutanil (Rally 40 WSP) at 0.35 kg/ha.",
+          "Kresoxim-methyl (Sovran) at 0.25 kg/ha."
+        ],
+        "cultural_practices": [
+          "Winter pruning: remove all mummified fruit clusters from trellises and ground.",
+          "Canopy management (leaf pulling) to increase solar exposure and air movement around fruit zones."
+        ]
+      }
+    },
+    "apple_scab": {
+      "name": "Apple Scab",
+      "crop": "Apple",
+      "pathogen": "Venturia inaequalis (Fungus)",
+      "severity_levels": {
+        "low": "Olive-green velvety spots on leaves (<5%).",
+        "moderate": "Darkened scabby lesions on leaves and young fruitlets (5-20%).",
+        "severe": "Cracked, distorted unmarketable fruit and premature defoliation (>20%)."
+      },
+      "symptoms": "Olive-green to velvety dark brown circular lesions on leaves and fruit, later becoming corky and cracked.",
+      "treatments": {
+        "organic": [
+          "Liquid lime sulfur spray during primary ascospore release.",
+          "Potassium silicate sprays for physical cuticle strengthening."
+        ],
+        "chemical": [
+          "Dithianon (Delan 700 WDG) at 0.5 kg/ha.",
+          "Cyprodinil (Vangard WG) at 0.35 kg/ha."
+        ],
+        "cultural_practices": [
+          "Autumn shredding and urea treatment (5%) of fallen leaves to accelerate leaf breakdown and prevent overwintering."
+        ]
+      }
+    },
+    "soybean_frogeye_leaf_spot": {
+      "name": "Frogeye Leaf Spot of Soybean",
+      "crop": "Soybean",
+      "pathogen": "Cercospora sojina (Fungus)",
+      "severity_levels": {
+        "low": "Small angular tan spots with narrow purple borders (<5%).",
+        "moderate": "Coalescing spots causing leaf blighting during pod fill (5-25%).",
+        "severe": "Premature defoliation, reduced pod fill and seed staining (>25%)."
+      },
+      "symptoms": "Small, circular to angular spots with light gray/tan centers and prominent dark red/purple margins.",
+      "treatments": {
+        "organic": [
+          "Bacillus pumilus bio-fungicide foliar treatment.",
+          "Crop rotation with corn or grain sorghum."
+        ],
+        "chemical": [
+          "Fluxapyroxad + Pyraclostrobin (Priaxor) at 0.3 L/ha at R3 (beginning pod stage).",
+          "Prothioconazole + Trifloxystrobin (Delaro 325 SC) at 0.6 L/ha."
+        ],
+        "cultural_practices": [
+          "Use certified seed with Rcs resistance gene.",
+          "Avoid saving seed from infected fields."
+        ]
+      }
+    },
+    "healthy_crop": {
+      "name": "Healthy Crop & Foliage",
+      "crop": "All Crops",
+      "pathogen": "None (Optimum Physiological State)",
+      "severity_levels": {
+        "low": "Optimal chlorophyll index. No visible or spectral pathology.",
+        "moderate": "Optimal chlorophyll index. No visible or spectral pathology.",
+        "severe": "Optimal chlorophyll index. No visible or spectral pathology."
+      },
+      "symptoms": "Uniform deep green color, intact leaf turgor, symmetrical canopy growth, optimal NDVI (>0.75) and NDRE values.",
+      "treatments": {
+        "organic": [
+          "Maintain balanced organic matter and microbial compost tea.",
+          "Routine preventive scouting and soil moisture monitoring."
+        ],
+        "chemical": [
+          "Standard balanced N-P-K fertigation according to phenological growth stage."
+        ],
+        "cultural_practices": [
+          "Maintain regular drone scouting schedule (every 7-10 days).",
+          "Ensure precision irrigation to preserve root oxygenation."
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CropWatch Lite | AI Crop Health, Multi-Scale Disease Diagnostics & Yield Forecasting</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <!-- Leaflet GIS CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-logo">
+        <i class="fa-solid fa-seedling"></i>
+      </div>
+      <div>
+        <div class="brand-title">CropWatch <span class="brand-badge">LITE</span></div>
+        <div class="brand-subtitle">Autonomous Satellite & Drone Crop Intelligence</div>
+      </div>
+    </div>
+
+    <div class="header-stats">
+      <div class="stat-pill">
+        <span class="status-dot"></span>
+        <span>Sentinel-2 BOA STAC: <strong>Connected</strong></span>
+      </div>
+      <div class="stat-pill">
+        <i class="fa-solid fa-drone"></i>
+        <span>RGB Photogrammetry: <strong>Ready</strong></span>
+      </div>
+      <div class="stat-pill">
+        <i class="fa-solid fa-microscope"></i>
+        <span>Vision Diagnostics: <strong>Active</strong></span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-primary" id="btn-generate-report">
+        <i class="fa-solid fa-file-invoice"></i> Export Agronomy Audit
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs-container">
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-satellite">
+        <i class="fa-solid fa-satellite"></i> 1. Macro Satellite (Sentinel-2)
+      </button>
+      <button class="nav-tab" data-tab="tab-drone">
+        <i class="fa-solid fa-helicopter"></i> 2. Meso Drone Photogrammetry
+      </button>
+      <button class="nav-tab" data-tab="tab-disease">
+        <i class="fa-solid fa-virus-covid"></i> 3. Micro Leaf AI Diagnostics
+      </button>
+      <button class="nav-tab" data-tab="tab-yield">
+        <i class="fa-solid fa-chart-line"></i> 4. Multimodal Yield Forecast
+      </button>
+      <button class="nav-tab" data-tab="tab-planner">
+        <i class="fa-solid fa-compass-drafting"></i> 5. Drone Mission & Optics (ME)
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Body -->
+  <main class="main-container">
+
+    <!-- ==================== TAB 1: SATELLITE SURVEILLANCE ==================== -->
+    <section class="tab-content active" id="tab-satellite">
+      <div class="grid-layout-2col">
+        
+        <!-- Left: Map & Raster Controls -->
+        <div class="card map-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-map-location-dot"></i> Farm Boundary & Multi-Spectral Surveillance
+            </div>
+            <div class="field-selector-group">
+              <label for="select-field">Field:</label>
+              <select id="select-field" class="form-select">
+                <option value="field_corn_01">Oakridge Corn Sector Alpha (34.2 ha)</option>
+                <option value="field_soybean_02">Prairie View Soybean Block 4 (28.5 ha)</option>
+                <option value="field_wheat_03">Highland Winter Wheat Plot (45.0 ha)</option>
+                <option value="field_tomato_04">Valley Commercial Tomato Field (12.8 ha)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="map-controls-bar">
+            <span class="control-label">Spectral Layer:</span>
+            <div class="btn-group" id="layer-btn-group">
+              <button class="btn btn-sm btn-layer active" data-layer="ndvi">NDVI (Biomass)</button>
+              <button class="btn btn-sm btn-layer" data-layer="ndre">NDRE (Red-Edge Stress)</button>
+              <button class="btn btn-sm btn-layer" data-layer="ndwi">NDWI (Water/Moisture)</button>
+              <button class="btn btn-sm btn-layer" data-layer="rgb">True Color RGB</button>
+            </div>
+            <button class="btn btn-sm btn-success ml-auto" id="btn-run-satellite">
+              <i class="fa-solid fa-arrows-rotate"></i> Ingest & Scan
+            </button>
+          </div>
+
+          <div class="map-wrapper">
+            <div id="satellite-map"></div>
+            
+            <!-- Map Overlay Heatmap Container -->
+            <div id="raster-overlay" class="raster-overlay hidden">
+              <img id="raster-image" src="" alt="Spectral Heatmap Overlay" />
+              <div class="legend-box">
+                <span id="legend-label">NDVI Scale:</span>
+                <div class="color-ramp"></div>
+                <div class="legend-values">
+                  <span>0.1 (Stressed/Soil)</span>
+                  <span>0.5</span>
+                  <span>0.9 (Dense Lush Canopy)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Multi-Spectral KPI & Anomaly Hotspots -->
+        <div class="card-column">
+          <!-- Summary Metrics Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-gauge-high"></i> Field Spectral Vigor Index
+              </div>
+              <span class="badge badge-emerald" id="badge-growth-stage">Peak Vegetative</span>
+            </div>
+
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-label">Mean NDVI</div>
+                <div class="kpi-value emerald" id="kpi-mean-ndvi">0.78</div>
+                <div class="kpi-sub">Biomass Interception</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Red-Edge NDRE</div>
+                <div class="kpi-value cyan" id="kpi-mean-ndre">0.54</div>
+                <div class="kpi-sub">Chlorophyll Density</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Water Index (NDWI)</div>
+                <div class="kpi-value blue" id="kpi-mean-ndwi">0.42</div>
+                <div class="kpi-sub">Canopy Hydration</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Soil Adjusted (SAVI)</div>
+                <div class="kpi-value amber" id="kpi-mean-savi">0.65</div>
+                <div class="kpi-sub">Background Neutralized</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Farm Anomaly & Infection Hotspots Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-triangle-exclamation text-amber"></i> Pre-Symptomatic Infection & Stress Hotspots
+              </div>
+              <span class="badge badge-amber" id="badge-anomaly-risk">Moderate Caution (4.2% Area)</span>
+            </div>
+
+            <p class="card-desc">
+              Spatial z-score and Red-Edge deficit detection isolated statistically anomalous clusters where chlorophyll absorption is collapsing.
+            </p>
+
+            <div class="table-container">
+              <table class="data-table" id="hotspots-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>GPS Target</th>
+                    <th>Area</th>
+                    <th>Diagnosis / Probable Cause</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="hotspots-body">
+                  <!-- Dynamically inserted -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== TAB 2: DRONE PHOTOGRAMMETRY ==================== -->
+    <section class="tab-content" id="tab-drone">
+      <div class="grid-layout-2col">
+        
+        <!-- Left: Drone Orthomosaic Upload & Heatmap -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-drone"></i> Sub-Meter Visible Photogrammetry (VARI / GLI)
+            </div>
+            <span class="badge badge-cyan">Low-Cost RGB Solution</span>
+          </div>
+
+          <div class="drone-upload-box" id="drone-dropzone">
+            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+            <div class="upload-title">Drop High-Res Drone Ortho Tile or Click to Upload</div>
+            <div class="upload-sub">Supports 4K/20MP aerial JPGs from standard DJI Mini / Air / Mavic drones</div>
+            <input type="file" id="input-drone-file" accept="image/*" class="hidden" />
+          </div>
+
+          <div class="sample-picker">
+            <span>Or load pre-calibrated sample:</span>
+            <button class="btn btn-xs btn-outline" id="btn-load-sample-drone">
+              <i class="fa-solid fa-image"></i> Sample 20MP Crop Row Ortho Tile
+            </button>
+          </div>
+
+          <div class="drone-image-comparison">
+            <div class="image-box">
+              <div class="image-tag">Original Drone RGB (2.5 cm/px GSD)</div>
+              <img id="img-drone-original" src="/static/placeholder.png" alt="Drone Original" />
+            </div>
+            <div class="image-box">
+              <div class="image-tag">VARI Canopy Health Heatmap</div>
+              <img id="img-drone-heatmap" src="/static/placeholder.png" alt="Drone Heatmap" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Canopy Stats & Variable-Rate Spraying -->
+        <div class="card-column">
+          <!-- Canopy Segmentation Metrics -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-leaf"></i> Canopy Fraction & Vigor Quantification
+              </div>
+            </div>
+
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-label">Canopy Cover %</div>
+                <div class="kpi-value emerald" id="kpi-canopy-cover">82.4%</div>
+                <div class="kpi-sub">Green Ground Fraction</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Healthy Foliage %</div>
+                <div class="kpi-value cyan" id="kpi-healthy-canopy">91.8%</div>
+                <div class="kpi-sub">VARI > 0.12</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Stressed / Blight Area</div>
+                <div class="kpi-value amber" id="kpi-stressed-canopy">8.2%</div>
+                <div class="kpi-sub">Chlorotic Foliage</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Effective GSD</div>
+                <div class="kpi-value purple" id="kpi-drone-gsd">2.5 cm</div>
+                <div class="kpi-sub">At 60m Altitude</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Variable Rate Precision Spraying Advisory -->
+          <div class="card highlight-card">
+            <div class="card-header">
+              <div class="card-title text-emerald">
+                <i class="fa-solid fa-spray-can-sparkles"></i> AI Variable-Rate Precision Spray Savings
+              </div>
+            </div>
+
+            <p class="card-desc">
+              Rather than spraying 100% of the field blindly, CropWatch Lite generates spot-application bounding coordinates for agricultural spray drones (e.g. DJI Agras T40).
+            </p>
+
+            <div class="savings-banner">
+              <div class="savings-number" id="lbl-chemical-savings">74.5%</div>
+              <div class="savings-text">
+                <strong>Chemical & Cost Reduction</strong>
+                <span>Targeted fungicide spot application saves thousands in input costs and prevents chemical runoff.</span>
+              </div>
+            </div>
+
+            <div class="spray-stats-list">
+              <div class="spray-stat-item">
+                <span>Conventional Blanket Spray Volume:</span>
+                <strong id="lbl-blanket-spray">510.0 Liters</strong>
+              </div>
+              <div class="spray-stat-item">
+                <span>CropWatch AI Spot Spray Volume:</span>
+                <strong class="text-emerald" id="lbl-targeted-spray">130.2 Liters</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== TAB 3: LEAF AI DISEASE LAB ==================== -->
+    <section class="tab-content" id="tab-disease">
+      <div class="grid-layout-2col">
+        
+        <!-- Left: Upload & Lesion Segmentation Overlay -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-microscope"></i> Close-Up Leaf Pathology Scanner
+            </div>
+            <span class="badge badge-purple">38+ Pathogen Taxonomy</span>
+          </div>
+
+          <div class="drone-upload-box" id="leaf-dropzone">
+            <i class="fa-solid fa-camera upload-icon"></i>
+            <div class="upload-title">Drop Leaf Photo or Click to Upload</div>
+            <div class="upload-sub">Instant edge computer vision lesion segmentation & diagnostic profiling</div>
+            <input type="file" id="input-leaf-file" accept="image/*" class="hidden" />
+          </div>
+
+          <div class="sample-picker">
+            <span>Or select field sample:</span>
+            <div class="sample-buttons-wrap" id="sample-leaf-buttons">
+              <!-- Dynamically populated from /api/sample-assets -->
+            </div>
+          </div>
+
+          <div class="leaf-analysis-view">
+            <div class="image-box">
+              <div class="image-tag">Original Leaf Input</div>
+              <img id="img-leaf-original" src="/static/placeholder.png" alt="Leaf Original" />
+            </div>
+            <div class="image-box">
+              <div class="image-tag">AI Necrotic Lesion Segmentation Overlay</div>
+              <img id="img-leaf-annotated" src="/static/placeholder.png" alt="Leaf Annotated" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Diagnostic Result, Severity & Action Plan -->
+        <div class="card-column">
+          <!-- Pathology ID Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-dna"></i> Pathology Classification & Severity
+              </div>
+              <span class="badge badge-red" id="badge-disease-severity">Severe Blight</span>
+            </div>
+
+            <div class="disease-hero">
+              <div class="disease-name" id="lbl-disease-name">Early Blight of Tomato</div>
+              <div class="disease-meta">
+                <span>Crop: <strong id="lbl-crop-name">Tomato</strong></span> • 
+                <span>Pathogen: <em id="lbl-pathogen-name">Alternaria solani (Fungus)</em></span> • 
+                <span>Confidence: <strong class="text-emerald" id="lbl-confidence">94.8%</strong></span>
+              </div>
+            </div>
+
+            <!-- Severity Gauge -->
+            <div class="severity-section">
+              <div class="severity-header">
+                <span>Infected Leaf Area (% Severity):</span>
+                <strong class="severity-pct-val" id="lbl-severity-pct">16.8%</strong>
+              </div>
+              <div class="severity-bar-bg">
+                <div class="severity-bar-fill" id="bar-severity-fill" style="width: 16.8%;"></div>
+              </div>
+              <div class="severity-desc" id="lbl-severity-desc">
+                Target-like brown lesions expanding with yellow halo. Moderate photosynthetic inhibition.
+              </div>
+            </div>
+          </div>
+
+          <!-- Agronomic Treatment Prescription Plan -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-prescription-bottle-medical"></i> Agronomic Action & Treatment Prescription
+              </div>
+            </div>
+
+            <div class="treatment-tabs">
+              <button class="t-tab active" data-ttab="organic"><i class="fa-solid fa-leaf"></i> Organic / Bio-Controls</button>
+              <button class="t-tab" data-ttab="chemical"><i class="fa-solid fa-flask"></i> Chemical Fungicides</button>
+              <button class="t-tab" data-ttab="cultural"><i class="fa-solid fa-tractor"></i> Cultural Practices</button>
+            </div>
+
+            <div class="treatment-body active" id="ttab-organic">
+              <ul class="treatment-list" id="list-organic">
+                <li>Bio-fungicide: Bacillus amyloliquefaciens foliar spray (Serenade ASO) at 4-8 L/ha.</li>
+                <li>Liquid copper hydroxide (Kocide 3000) every 7-10 days.</li>
+              </ul>
+            </div>
+
+            <div class="treatment-body" id="ttab-chemical">
+              <ul class="treatment-list" id="list-chemical">
+                <li>Chlorothalonil (Bravo Weather Stik) at 1.5-2.0 L/ha for protective coverage.</li>
+                <li>Difenoconazole (Score 250 EC) at 0.5 L/ha for systemic translaminar eradication.</li>
+              </ul>
+            </div>
+
+            <div class="treatment-body" id="ttab-cultural">
+              <ul class="treatment-list" id="list-cultural">
+                <li>Stake and prune indeterminate vines to enhance airflow and suppress canopy humidity.</li>
+                <li>Drip irrigation only; eliminate overhead sprinklers.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== TAB 4: YIELD FORECAST ==================== -->
+    <section class="tab-content" id="tab-yield">
+      <div class="grid-layout-2col">
+        
+        <!-- Left: Input Parameters & Simulator -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-sliders"></i> Multimodal Yield Drivers & Climate Inputs
+            </div>
+            <button class="btn btn-sm btn-primary" id="btn-recalculate-yield">
+              <i class="fa-solid fa-calculator"></i> Run Forecast Engine
+            </button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Target Crop</label>
+              <select id="input-yield-crop" class="form-select">
+                <option value="corn">Corn (Maize)</option>
+                <option value="soybean">Soybean</option>
+                <option value="wheat">Wheat</option>
+                <option value="tomato">Tomato</option>
+                <option value="potato">Potato</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Peak NDVI (Canopy Biomass)</label>
+              <input type="number" id="input-yield-ndvi" class="form-input" value="0.84" step="0.01" min="0.3" max="0.98" />
+            </div>
+
+            <div class="form-group">
+              <label>Accumulated GDD (°C-Days)</label>
+              <input type="number" id="input-yield-gdd" class="form-input" value="1480" step="10" />
+            </div>
+
+            <div class="form-group">
+              <label>Seasonal Precipitation (mm)</label>
+              <input type="number" id="input-yield-rain" class="form-input" value="465" step="5" />
+            </div>
+
+            <div class="form-group">
+              <label>Mean Vapor Pressure Deficit (kPa)</label>
+              <input type="number" id="input-yield-vpd" class="form-input" value="1.35" step="0.05" />
+            </div>
+
+            <div class="form-group">
+              <label>Soil Organic Carbon (%)</label>
+              <input type="number" id="input-yield-soc" class="form-input" value="2.4" step="0.1" />
+            </div>
+
+            <div class="form-group">
+              <label>Detected Disease Severity (%)</label>
+              <input type="number" id="input-yield-disease" class="form-input" value="8.5" step="0.5" />
+            </div>
+
+            <div class="form-group">
+              <label>Spatial Farm Anomaly Area (%)</label>
+              <input type="number" id="input-yield-anomaly" class="form-input" value="4.2" step="0.1" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Forecast Display & Factor Attribution -->
+        <div class="card-column">
+          <!-- Main Forecast Hero -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-wheat-awn"></i> AI Harvest Projection (LightGBM Engine)
+              </div>
+              <span class="badge badge-emerald" id="lbl-yield-grade">Optimal Yield (+8.6%)</span>
+            </div>
+
+            <div class="yield-hero">
+              <div class="yield-primary">
+                <span class="yield-huge" id="lbl-yield-tha">11.4</span>
+                <span class="yield-unit">Tonnes / Hectare</span>
+              </div>
+              <div class="yield-secondary">
+                <span class="yield-bushels" id="lbl-yield-buac">181.6 bu/ac</span>
+                <span class="yield-ci" id="lbl-yield-ci">90% CI: [10.5 - 12.3 t/ha]</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Attribution Breakdown -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-chart-pie"></i> Agronomic Attribution & Limiting Factors
+              </div>
+            </div>
+
+            <div class="impact-list" id="impact-factors-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== TAB 5: DRONE FLIGHT PLANNER ==================== -->
+    <section class="tab-content" id="tab-planner">
+      <div class="grid-layout-2col">
+        
+        <!-- Left: Flight Parameters Form -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-compass-drafting"></i> UAV Photogrammetry & Optics Physics
+            </div>
+            <button class="btn btn-sm btn-primary" id="btn-calculate-flight">
+              <i class="fa-solid fa-calculator"></i> Calculate Flight Path
+            </button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Camera Sensor Payload</label>
+              <select id="input-flight-camera" class="form-select">
+                <option value="dji_mavic_3e">DJI Mavic 3 Enterprise 4/3" RGB</option>
+                <option value="dji_mini_4_pro">DJI Mini 4 Pro / Consumer 1/1.3" RGB</option>
+                <option value="micasense_rededge_p">MicaSense RedEdge-P Multispectral</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Field Survey Area (Hectares)</label>
+              <input type="number" id="input-flight-area" class="form-input" value="34.2" step="0.5" />
+            </div>
+
+            <div class="form-group">
+              <label>Flight Altitude Above Ground (Meters)</label>
+              <input type="number" id="input-flight-alt" class="form-input" value="65" step="5" min="20" max="150" />
+            </div>
+
+            <div class="form-group">
+              <label>Forward Overlap (%)</label>
+              <input type="number" id="input-flight-fwd" class="form-input" value="75" step="5" />
+            </div>
+
+            <div class="form-group">
+              <label>Side Overlap (%)</label>
+              <input type="number" id="input-flight-side" class="form-input" value="70" step="5" />
+            </div>
+
+            <div class="form-group">
+              <label>Flight Speed (m/s)</label>
+              <input type="number" id="input-flight-speed" class="form-input" value="7.5" step="0.5" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Optics & Kinematics Result -->
+        <div class="card-column">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-satellite-dish"></i> Mission Kinematics & Battery Logistics
+              </div>
+            </div>
+
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-label">Ground Sampling (GSD)</div>
+                <div class="kpi-value cyan" id="lbl-plan-gsd">1.78 cm/px</div>
+                <div class="kpi-sub">Sub-Canopy Precision</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Flight Duration</div>
+                <div class="kpi-value emerald" id="lbl-plan-time">32.4 min</div>
+                <div class="kpi-sub">Total Line Time</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Flight Lines</div>
+                <div class="kpi-value amber" id="lbl-plan-lines">24 passes</div>
+                <div class="kpi-sub">Grid Geometry</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Batteries Required</div>
+                <div class="kpi-value purple" id="lbl-plan-batteries">2 packs</div>
+                <div class="kpi-sub">24m nominal endurance</div>
+              </div>
+            </div>
+
+            <div class="flight-notes-box">
+              <div class="flight-note-item">
+                <i class="fa-solid fa-camera"></i>
+                <span>Max Shutter Speed to prevent motion blur: <strong id="lbl-plan-shutter">1/840s or faster</strong></span>
+              </div>
+              <div class="flight-note-item">
+                <i class="fa-solid fa-images"></i>
+                <span>Total images captured: <strong id="lbl-plan-photos">480 photos</strong> (approx. 3.8 GB)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Agronomy Audit Report Modal -->
+  <div class="modal-backdrop hidden" id="report-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-file-contract"></i> Official Agronomy & Harvest Audit Report</div>
+        <button class="modal-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-report-content">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-print-report"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
+        <button class="btn btn-primary" id="btn-dismiss-modal">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

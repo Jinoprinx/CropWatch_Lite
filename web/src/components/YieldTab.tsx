@@ -5,9 +5,19 @@ import { Sliders, Calculator, Wheat, PieChart } from "@/components/Icons";
 
 interface YieldTabProps {
   initialDiseaseSeverity?: number;
+  irrigationEfficiencyScore?: number;
+  onAuditDataChange?: (data: {
+    yieldResult: any;
+    peakNdvi: number;
+    gdd: number;
+    rain: number;
+    soc: number;
+    diseasePct: number;
+    anomalyPct: number;
+  }) => void;
 }
 
-export const YieldTab: React.FC<YieldTabProps> = ({ initialDiseaseSeverity = 8.5 }) => {
+export const YieldTab: React.FC<YieldTabProps> = ({ initialDiseaseSeverity = 8.5, irrigationEfficiencyScore, onAuditDataChange }) => {
   const [loading, setLoading] = useState(false);
   const [crop, setCrop] = useState("corn");
   const [peakNdvi, setPeakNdvi] = useState(0.84);
@@ -70,11 +80,17 @@ export const YieldTab: React.FC<YieldTabProps> = ({ initialDiseaseSeverity = 8.5
           soil_organic_carbon_pct: soc,
           available_water_capacity_mm: 165.0,
           detected_disease_severity_pct: diseasePct,
-          farm_anomaly_area_pct: anomalyPct
+          farm_anomaly_area_pct: anomalyPct,
+          ...(irrigationEfficiencyScore !== undefined && { irrigation_efficiency_score: irrigationEfficiencyScore }),
         })
       });
       const data = await res.json();
       setYieldResult(data);
+      // Surface live farm data to audit modal
+      onAuditDataChange?.({
+        yieldResult: data,
+        peakNdvi, gdd, rain, soc, diseasePct, anomalyPct,
+      });
     } catch (err) {
       console.error("Yield forecast error:", err);
     } finally {

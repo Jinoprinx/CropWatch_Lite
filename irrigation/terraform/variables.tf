@@ -1,0 +1,9 @@
+﻿variable "aws_region"          { default = "us-east-1" }
+variable "project_name"        { default = "cropwatch-irrigation" }
+variable "environment"         { default = "production" }
+variable "field_id"            { default = "field_corn_01" }
+variable "num_sensor_nodes"    { default = 8 }
+variable "zone_ids"            { default = ["zone_nw", "zone_ne", "zone_sw", "zone_se"] }
+variable "ecr_repository_url"  { description = "ECR image URI for the fusion engine Lambda" }
+variable "image_tag"           { default = "latest" }
+variable "iot_endpoint"        { description = "AWS IoT Core endpoint (from: aws iot describe-endpoint)" }

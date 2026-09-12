@@ -7,13 +7,27 @@ import { DroneTab } from "@/components/DroneTab";
 import { LeafDiseaseTab } from "@/components/LeafDiseaseTab";
 import { YieldTab } from "@/components/YieldTab";
 import { FlightPlannerTab } from "@/components/FlightPlannerTab";
+import { IrrigationTab } from "@/components/IrrigationTab";
 import { AgronomyAuditModal } from "@/components/AgronomyAuditModal";
-import { Satellite, Helicopter, Bug, TrendingUp, Compass } from "@/components/Icons";
+import { Satellite, Helicopter, Bug, TrendingUp, Compass, Droplets } from "@/components/Icons";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"satellite" | "drone" | "disease" | "yield" | "planner">("satellite");
+  const [activeTab, setActiveTab] = useState<"satellite" | "drone" | "disease" | "yield" | "planner" | "irrigation">("satellite");
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [leafDiseaseSeverity, setLeafDiseaseSeverity] = useState(14.5);
+  const [irrigationEfficiencyScore, setIrrigationEfficiencyScore] = useState<number | null>(null);
+
+  // Live farm data surfaced from YieldTab → passed to Audit Modal for recommendations
+  const [farmAuditData, setFarmAuditData] = useState<{
+    yieldResult?: any;
+    peakNdvi?: number;
+    gdd?: number;
+    rain?: number;
+    soc?: number;
+    diseasePct?: number;
+    anomalyPct?: number;
+    irrigationEfficiencyScore?: number;
+  }>({});
 
   return (
     <>
@@ -52,6 +66,13 @@ export default function Home() {
           >
             <Compass size={15} /> 5. Drone Mission &amp; Optics (ME)
           </button>
+          <button
+            className={`nav-tab ${activeTab === "irrigation" ? "active" : ""}`}
+            onClick={() => setActiveTab("irrigation")}
+            id="nav-tab-irrigation"
+          >
+            <Droplets size={15} /> 6. Smart Irrigation
+          </button>
         </div>
       </nav>
 
@@ -77,7 +98,11 @@ export default function Home() {
 
         {activeTab === "yield" && (
           <div className="tab-content active">
-            <YieldTab initialDiseaseSeverity={leafDiseaseSeverity} />
+            <YieldTab
+              initialDiseaseSeverity={leafDiseaseSeverity}
+              irrigationEfficiencyScore={irrigationEfficiencyScore ?? undefined}
+              onAuditDataChange={(data) => setFarmAuditData({ ...data, irrigationEfficiencyScore: irrigationEfficiencyScore ?? undefined })}
+            />
           </div>
         )}
 
@@ -86,10 +111,24 @@ export default function Home() {
             <FlightPlannerTab />
           </div>
         )}
+
+        {activeTab === "irrigation" && (
+          <div className="tab-content active">
+            <IrrigationTab onEfficiencyScoreChange={(score) => setIrrigationEfficiencyScore(score)} />
+          </div>
+        )}
       </main>
 
       {/* Report Modal */}
-      <AgronomyAuditModal isOpen={isReportOpen} onClose={() => setIsReportOpen(false)} />
+      <AgronomyAuditModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        farmData={{
+          ...farmAuditData,
+          leafDiseaseSeverity,
+          irrigationEfficiencyScore: irrigationEfficiencyScore ?? undefined,
+        }}
+      />
     </>
   );
 }

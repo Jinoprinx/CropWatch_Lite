@@ -152,13 +152,33 @@ export const SatelliteTab: React.FC<SatelliteTabProps> = ({ onSelectScoutHotspot
         }
       }).addTo(polygonLayerRef.current);
 
-      // Compute bounds from raw GeoJSON coordinates (pure math, no pixel projection needed)
+      // Compute bounds from raw GeoJSON coordinates — validate each pair first
       const rawCoords: number[][] = field.geometry?.coordinates?.[0] ?? [];
       if (rawCoords.length >= 3) {
-        const latLngs = rawCoords.map((c: number[]) => L.latLng(c[1], c[0]));
-        const bounds = L.latLngBounds(latLngs);
-        if (bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [35, 35] });
+        // Filter out any malformed [lon, lat] pairs before constructing LatLng objects
+        const validLatLngs = rawCoords
+          .filter((c: number[]) =>
+            Array.isArray(c) &&
+            c.length >= 2 &&
+            isFinite(c[0]) && !isNaN(c[0]) &&
+            isFinite(c[1]) && !isNaN(c[1])
+          )
+          .map((c: number[]) => L.latLng(c[1], c[0]));
+
+        if (validLatLngs.length >= 2) {
+          const bounds = L.latLngBounds(validLatLngs);
+          if (bounds.isValid()) {
+            // invalidateSize ensures the map container has correct pixel dimensions,
+            // then defer fitBounds to the next animation frame so the browser has painted.
+            map.invalidateSize(false);
+            requestAnimationFrame(() => {
+              try {
+                map.fitBounds(bounds, { padding: [35, 35] });
+              } catch {
+                // fitBounds can still throw if the map was destroyed between frames
+              }
+            });
+          }
         }
       }
 

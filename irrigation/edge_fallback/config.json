@@ -1,0 +1,29 @@
+﻿{
+  "version": "1.0",
+  "description": "CropWatch Lite Smart Irrigation - Edge Fallback Configuration",
+  "check_interval_minutes": 30,
+  "default_valve_open_duration_min": 20,
+  "crop_thresholds": {
+    "corn":    { "critical_vwc_pct": 28.0, "optimal_vwc_pct": 60.0, "field_capacity_pct": 38.0 },
+    "maize":   { "critical_vwc_pct": 28.0, "optimal_vwc_pct": 60.0, "field_capacity_pct": 38.0 },
+    "wheat":   { "critical_vwc_pct": 22.0, "optimal_vwc_pct": 55.0, "field_capacity_pct": 35.0 },
+    "soybean": { "critical_vwc_pct": 25.0, "optimal_vwc_pct": 58.0, "field_capacity_pct": 36.0 },
+    "tomato":  { "critical_vwc_pct": 35.0, "optimal_vwc_pct": 70.0, "field_capacity_pct": 42.0 },
+    "potato":  { "critical_vwc_pct": 32.0, "optimal_vwc_pct": 65.0, "field_capacity_pct": 40.0 }
+  },
+  "zones": [
+    { "zone_id": "zone_nw", "nodes": ["n1", "n2"], "valve_gpio": 26, "soil_type": "silt_loam" },
+    { "zone_id": "zone_ne", "nodes": ["n3", "n4"], "valve_gpio": 27, "soil_type": "clay_loam" },
+    { "zone_id": "zone_sw", "nodes": ["n5", "n6"], "valve_gpio": 28, "soil_type": "sandy_loam" },
+    { "zone_id": "zone_se", "nodes": ["n7", "n8"], "valve_gpio": 29, "soil_type": "clay_loam" }
+  ],
+  "pump": {
+    "gpio_enable": 32,
+    "target_pressure_bar": 3.5,
+    "vfd_min_speed_pct": 30.0,
+    "vfd_max_speed_pct": 100.0
+  },
+  "dynamo_sync_on_reconnect": true,
+  "log_file": "irrigation_log.json",
+  "max_log_entries": 500
+}

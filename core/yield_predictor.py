@@ -95,7 +95,8 @@ class YieldPredictor:
         soil_organic_carbon_pct: float = 2.4,
         available_water_capacity_mm: float = 165.0,
         detected_disease_severity_pct: float = 0.0,
-        farm_anomaly_area_pct: float = 0.0
+        farm_anomaly_area_pct: float = 0.0,
+        irrigation_efficiency_score: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
         Executes multimodal yield inference with explainable impact attribution.
@@ -127,9 +128,18 @@ class YieldPredictor:
         predicted_yield = float(model.predict(features)[0])
         predicted_yield = max(round(predicted_yield, 2), 0.5)
 
-        # Confidence intervals (+/- 7.5% model uncertainty)
-        ci_lower = round(predicted_yield * 0.925, 2)
-        ci_upper = round(predicted_yield * 1.075, 2)
+        # Apply precision irrigation correction when efficiency score is provided
+        # Score 0.0 → 0.85× (poor irrigation = yield penalty)
+        # Score 1.0 → 1.05× (perfect irrigation = small yield bonus)
+        if irrigation_efficiency_score is not None:
+            eff = max(0.0, min(1.0, float(irrigation_efficiency_score)))
+            irrigation_correction = 0.85 + (eff * 0.20)
+            predicted_yield = max(round(predicted_yield * irrigation_correction, 2), 0.5)
+
+        # Confidence intervals — tighter when precision irrigation data is present
+        ci_half = 0.050 if irrigation_efficiency_score is not None else 0.075
+        ci_lower = round(predicted_yield * (1.0 - ci_half), 2)
+        ci_upper = round(predicted_yield * (1.0 + ci_half), 2)
 
         # Calculate Bushels per acre (for US agronomic standard)
         predicted_bu_ac = round(predicted_yield * meta["bushel_factor"], 1)
@@ -171,6 +181,21 @@ class YieldPredictor:
             }
         ]
 
+        # Append irrigation efficiency attribution when precision data is present
+        if irrigation_efficiency_score is not None:
+            eff = max(0.0, min(1.0, float(irrigation_efficiency_score)))
+            correction = 0.85 + (eff * 0.20)
+            impact_breakdown.append({
+                "factor": "Precision Irrigation Efficiency",
+                "impact_tha": round((correction - 1.0) * base_yield, 2),
+                "direction": "positive" if correction >= 1.0 else "negative",
+                "notes": (
+                    f"Smart irrigation efficiency score {eff:.0%} applied. "
+                    f"Correction factor: {correction:.3f}×. "
+                    f"Confidence interval tightened to ±5.0% (from ±7.5%)."
+                ),
+            })
+
         return {
             "crop": crop.capitalize(),
             "predicted_yield_tha": predicted_yield,
@@ -179,8 +204,11 @@ class YieldPredictor:
             "variance_vs_baseline_pct": pct_diff_baseline,
             "confidence_interval_90": {
                 "lower_bound_tha": ci_lower,
-                "upper_bound_tha": ci_upper
+                "upper_bound_tha": ci_upper,
+                "ci_half_width_pct": 5.0 if irrigation_efficiency_score is not None else 7.5,
             },
             "yield_grade": "Superior Yield (>+10%)" if pct_diff_baseline > 10 else ("Standard / Optimal (±10%)" if pct_diff_baseline >= -10 else "Yield Deficit Alert (<-10%)"),
+            "irrigation_efficiency_score": irrigation_efficiency_score,
+            "precision_irrigation_applied": irrigation_efficiency_score is not None,
             "impact_attribution": impact_breakdown
         }

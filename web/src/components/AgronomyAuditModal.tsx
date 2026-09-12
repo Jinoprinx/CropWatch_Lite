@@ -498,7 +498,7 @@ export const AgronomyAuditModal: React.FC<AgronomyAuditModalProps> = ({ isOpen, 
 
                         {/* Metrics footer */}
                         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
-                          <div style={{ display: "flex", align: "center", gap: 5 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                             <TrendingUp size={11} color="#10b981" />
                             <span style={{ fontSize: 11, color: "#10b981", fontWeight: 700 }}>
                               Yield lift: +{rec.yieldLiftMin.toFixed(2)} – +{rec.yieldLiftMax.toFixed(2)} t/ha
